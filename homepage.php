@@ -1,3 +1,9 @@
+<?php
+session_start();
+include_once 'db_connection.php';
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -73,6 +79,36 @@
         </div>
     </div>
 </nav>
+
+<?php
+echo "<div class='row'>
+            <div class='center-block' style='width:80%;'>
+            <div class='page-header'>
+            <h2 align ='center'>Project Lists</h2><br/>
+            </div>";
+$get_project = "select * from project,user where uemail = creator";
+$project = $conn->query($get_project);
+// if ($res = mysqli_query($conn, $sql)) {
+// 	// echo "New record created successfully" . "<br>";
+// } else {
+//     echo "Error: " . $sql . "<br>" . mysqli_error($conn);
+// }
+if ($project -> num_rows > 0) {
+    echo "<table class= 'table table-striped table-hover'><tr><th>Creator</th><th>Title</th><th>Description</th><th>Create Time</th></tr>";
+    while ($row = $project -> fetch_assoc()) {
+        echo "<tr>";
+        echo "<td>" . $row['username'] . "</td>";
+        echo "<td>" . $row['ptitle'] . "</td>";
+        echo "<td>" . $row['pdescription'] . "</td>";
+        echo "<td>" . $row['pcreatetime'] . "</td>";
+        echo "</tr>";                
+    }
+    echo "</table><br/>";       
+} else {
+            echo "<h3 align ='center'>There are No Other Users</h3><br/><br/><br/>";
+        }
+echo "</div></div>";
+?>
 
 <!-- Footer -->
 <footer>
