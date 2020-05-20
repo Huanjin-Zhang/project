@@ -4,9 +4,9 @@
     <meta charset="utf-8">
     <title>Issue Tracking</title>
     <!-- Bootstrap -->
-    <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css" />
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/jquery-3.2.1.js"></script>
+	<link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+	<script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
     
 
     
@@ -44,36 +44,40 @@
             margin-bottom: 30px;
         }
 
-        .tagcontainer{
+        .container{
             height: 350px;
-            width: 1200px;
-            color: white;
+            width: 100%;
+            background-color: gray;
         }
 
     </style>
 
 </head>
 <body>
-<nav class ="navbar navbar-default navbar-left" role="navigation">
-    <div class = "container">
+<nav class ="navbar navbar-default" role="navigation">
+    <div class = "container-fluid">
         <div class ="navbar-header">
             <a class="navbar-brand">Issue Tracking</a>
         </div>
-        <div class="collapse navbar-collapse">
-            <ul class ="nav navbar-nav">
+        <div class="navbar-collapse">
+            <ul class ="nav navbar-nav navbar-left">
                 <li class="active"><a href="homepage.php">Home</a></li>
                 <li><a href="lead.php">Lead</a></li>
                 <li><a href="issue.php">Issues</a></li>
             </ul>
             
+            <ul class="nav navbar-nav navbar-right"> 
+            	<li><a href="signin.php">Sign In</a></li> 
+            	<li><a href="signup.php">Sign Up</a></li> 
+        	</ul> 
         </div>
     </div>
 </nav>
 
 <!-- Footer -->
 <footer>
-    <div class="container">
-        <div class="row">
+    <div>
+        <div class="row center">
             <div class="col-lg-10 col-lg-offset-1 text-center">
                 <h4><strong>Powered by</strong>
                 </h4>
