@@ -55,7 +55,7 @@ if (isset($_POST['signup'])) {
     }
 
     if (!$error && !$mailerror) {
-        if(mysqli_query($conn, "insert into user values (". $email ."','" . $uname . "','" . $password . "','" . $displayname ."');")) {
+        if(mysqli_query($conn, "insert into user values ('". $email ."','" . $uname . "','" . $password . "','" . $displayname ."')")) {
             $successmsg = "Successfully Registered! <a href='homepage.php'>Click here to Login</a>";
         } else {
             $errormsg = "Error...Please try again later!";
