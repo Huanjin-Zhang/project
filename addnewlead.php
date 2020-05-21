@@ -1,10 +1,13 @@
 <?php
 session_start();
 include_once 'db_connection.php';
+if (isset($_GET['pid']))    
+    $_SESSION['pid'] = $_GET['pid'];
 $error = true;
 
 //check if form is submitted
 if (isset($_POST['add'])) {
+    setcookie('mycookie', $_POST['add']);
     $uname = mysqli_real_escape_string($conn, $_POST['uname']);
     // verify the username and email
     $userquery = "SELECT * FROM user";
@@ -19,10 +22,14 @@ if (isset($_POST['add'])) {
             $uname_error = "This username do not exist";
         }
     }
-
+    
     if (!$error) {
-        if(mysqli_query($conn, "insert into project_leads values ('". $_GET['pid'] ."','" . $uname . "',now())" )) {
-            $successmsg = "Successfully Inserted! <a href='addnewlead.php?pid=". $_GET['pid']."</a>";
+        $uemailquery = "SELECT * FROM user WHERE username = '" . $uname . "'";
+        $uemailresult = $conn -> query($uemailquery);
+        $useremailarray = $uemailresult -> fetch_assoc();
+        $useremail = $useremailarray['uemail'];
+        if(mysqli_query($conn, "insert into project_leads values ('". $_SESSION['pid'] ."','" . $useremail . "',now())" )) {
+            $successmsg = "Successfully Inserted!";
         } else {
             $errormsg = "Error...Please try again later!";
         }
@@ -111,13 +118,13 @@ if (isset($_POST['add'])) {
 </nav>
 
 <?php
-if(isset($_GET["pid"])){
+if($_SESSION['pid']){
     echo "<div class='row'>
                 <div class='center-block' style='width:80%;'>
                 <div class='page-header'>
                 <h2 align ='center'>Leaders of Project</h2><br/>
                 </div>";
-    $get_issue = "select * from project_leads natural join user where pid = '".$_GET['pid']."'";
+    $get_issue = "select * from project_leads natural join user where pid = '".$_SESSION['pid']."'";
     $issues = $conn->query($get_issue);
 
     if ($issues -> num_rows > 0) {

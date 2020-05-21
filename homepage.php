@@ -100,6 +100,7 @@ if ($project -> num_rows > 0) {
         echo "<td>" . $row['pdescription'] . "</td>";
         echo "<td>" . $row['pcreatetime'] . "</td>";
         echo "<td><a href='checkissue.php?pid=".$row['pid']."'>check issue</a></td>";
+        //echo "<td><form method=\"post\" action=\"/project/checkissue.php/\">    <input type=\"submit\" name=\"pid\" value=".$row['pid']." /></form></td>";
         echo "</tr>";                
     }
     echo "</table><br/>";       

@@ -41,6 +41,7 @@ include_once 'db_connection.php';
         .marginBottom{
             margin-bottom: 30px;
         }
+
         .container{
             height: 350px;
             width: 100%;
@@ -81,13 +82,12 @@ if(isset($_GET["pid"])){
                 <div class='center-block' style='width:80%;'>
                 <div class='page-header'>
                 <h2 align ='center'>Issues of the Project</h2><br/>
-                
                 </div>";
     $get_issue = "with current_status as(select iid,max(modifytime) as newest from status_history group by iid) select iid,assigndate,ititle,idescription,currentstatus,modifytime,u2.username as reporter from user u1 natural join assignee natural join issue natural join status_history natural join current_status,user u2 where issue.pid = " . "'" . $_GET['pid'] . "'and modifytime = newest and reporter=u2.uemail group by iid";
     $issues = $conn->query($get_issue);
 
     if ($issues -> num_rows > 0) {
-        echo "<table class= 'table table-striped table-hover'><tr><th>Issue ID</th><th>Issue Title</th><th>Issue Description</th><th>Current Status</th><th>Modifytime</th><th>Reporter</th></tr>";
+        echo "<table class= 'table table-striped table-hover'><tr><th>Issue ID</th><th>Issue Title</th><th>Issue Description</th><th>Current Status</th><th>Modifytime</th><th>Reporter</th><th></th></tr>";
         while ($row = $issues -> fetch_assoc()) {
             echo "<tr>";
             echo "<td>" . $row['iid'] . "</td>";
@@ -96,6 +96,7 @@ if(isset($_GET["pid"])){
             echo "<td>" . $row['currentstatus'] . "</td>";
             echo "<td>" . $row['modifytime'] . "</td>";
             echo "<td>" . $row['reporter'] . "</td>";
+            echo "<td><a href='checkdetail.php?iid=".$row['iid']."'>check detail</a></td>";
             echo "</tr>";                
         }
         echo "</table><br/>";       
@@ -109,7 +110,8 @@ if(isset($_GET["pid"])){
 <div class = "row">
 	<div class="center-block" style="width:80%;">
         <div class="page-header'">
-        	<button type='button' class ='btn btn-success' style='<?php if(!isset($_SESSION['valid_user'])) echo "display:none"; ?>'      onclick='window.location.href="reportIssue.php"'>Report Issues</button>
+            <a href='reportIssue.php?pid=<?php echo $_GET["pid"]; ?>'>
+        	<button type='button' class ='btn btn-success' style='<?php if(!isset($_SESSION['valid_user'])) echo "display:none"; ?>'>Report Issues</button></a>
         </div>
    	</div>
 </div>
