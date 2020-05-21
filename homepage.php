@@ -82,36 +82,8 @@ include_once 'db_connection.php';
     </div>
 </nav>
 
-<?php
-if(isset($_GET["pid"])){
-    echo "<div class='row'>
-                <div class='center-block' style='width:80%;'>
-                <div class='page-header'>
-                <h2 align ='center'>Issues of the Project</h2><br/>
-                <button type='button' class ='btn btn-success' onclick='window.location.href=\"reportIssue.php\"'>Report Issues</button>
-                </div>";
-    $get_issue = "with current_status as(select iid,max(modifytime) as newest from status_history group by iid) select iid,assigndate,ititle,idescription,currentstatus,modifytime,u2.username as reporter from user u1 natural join assignee natural join issue natural join status_history natural join current_status,user u2 where issue.pid = " . "'" . $_GET['pid'] . "'and modifytime = newest and reporter=u2.uemail group by iid";
-    $issues = $conn->query($get_issue);
 
-    if ($issues -> num_rows > 0) {
-        echo "<table class= 'table table-striped table-hover'><tr><th>Issue ID</th><th>Issue Title</th><th>Issue Description</th><th>Current Status</th><th>Modifytime</th><th>Reporter</th></tr>";
-        while ($row = $issues -> fetch_assoc()) {
-            echo "<tr>";
-            echo "<td>" . $row['iid'] . "</td>";
-            echo "<td>" . $row['ititle'] . "</td>";
-            echo "<td>" . $row['idescription'] . "</td>";
-            echo "<td>" . $row['currentstatus'] . "</td>";
-            echo "<td>" . $row['modifytime'] . "</td>";
-            echo "<td>" . $row['reporter'] . "</td>";
-            echo "</tr>";                
-        }
-        echo "</table><br/>";       
-    } else {
-        echo "<h3 align ='center'>There are No issue under such project</h3><br/><br/><br/>";
-    }
-    echo "</div></div>";
-}
-else{
+<?php
 echo "<div class='row'>
             <div class='center-block' style='width:80%;'>
             <div class='page-header'>
@@ -127,15 +99,14 @@ if ($project -> num_rows > 0) {
         echo "<td>" . $row['ptitle'] . "</td>";
         echo "<td>" . $row['pdescription'] . "</td>";
         echo "<td>" . $row['pcreatetime'] . "</td>";
-        echo "<td><a href='homepage.php?pid=".$row['pid']."'>check issue</a></td>";
+        echo "<td><a href='checkissue.php?pid=".$row['pid']."'>check issue</a></td>";
         echo "</tr>";                
     }
     echo "</table><br/>";       
 } else {
-            echo "<h3 align ='center'>There are No Other Users</h3><br/><br/><br/>";
-        }
-echo "</div></div>";
+    echo "<h3 align ='center'>There are No Other Users</h3><br/><br/><br/>";
 }
+echo "</div></div>";
 ?>
 
 <!-- Footer -->
