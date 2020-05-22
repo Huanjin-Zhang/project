@@ -28,7 +28,10 @@ if (isset($_POST['add'])) {
         $uemailresult = $conn -> query($uemailquery);
         $useremailarray = $uemailresult -> fetch_assoc();
         $useremail = $useremailarray['uemail'];
-        if(mysqli_query($conn, "insert into assignee values ('". $_SESSION['iid'] ."','" . $useremail . "',now())" )) {
+
+        $stmt = $conn->prepare("INSERT INTO assignee VALUES (?,?,now())");
+        $stmt->bind_param('ss', $_SESSION['iid'],$useremail);
+        if($stmt->execute()) {
             $successmsg = "Successfully Inserted!";
         } else {
             $errormsg = "Error...Please try again later!";

@@ -35,9 +35,10 @@ if (isset($_POST['next'])) {
         try {
             // First of all, let's begin a transaction
             $conn->begin_transaction();
-
-            // A set of queries; if one fails, an exception should be thrown
-            $conn->query("INSERT INTO project(creator,ptitle,pdescription,pcreatetime) VALUES( '".$creator."','".$ptitle."','".$pdescription."',now())");
+            $stmt1 = $conn->prepare("INSERT INTO project(creator,ptitle,pdescription,pcreatetime) VALUES( '".$creator."',?,?,now())");
+            $stmt1->bind_param('ss', $ptitle,$pdescription);
+            $stmt1->execute();
+            // A set of queries; if one fails, an exception should be thrown        
             $conn->query("INSERT INTO project_leads( pid,uemail,addtime) VALUES((SELECT max(pid) from project where creator = '".$creator."'),'".$creator."', now())");
             $conn->query("INSERT INTO project_status(pid,status) VALUES ((SELECT max(pid) from project where creator = '".$creator."'),'OPEN'),     ((SELECT max(pid) from project where creator = '".$creator."'),'CLOSED')");
            

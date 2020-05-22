@@ -28,7 +28,9 @@ if (isset($_POST['add'])) {
         $uemailresult = $conn -> query($uemailquery);
         $useremailarray = $uemailresult -> fetch_assoc();
         $useremail = $useremailarray['uemail'];
-        if(mysqli_query($conn, "insert into project_leads values ('". $_SESSION['pid'] ."','" . $useremail . "',now())" )) {
+        $stmt = $conn->prepare("INSERT INTO project_leads VALUES (?,?,now())");
+        $stmt->bind_param('ss', $_SESSION['pid'],$useremail);
+        if($stmt->execute()) {
             $successmsg = "Successfully Inserted!";
         } else {
             $errormsg = "Error...Please try again later!";

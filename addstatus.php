@@ -22,7 +22,9 @@ if (isset($_POST['add'])) {
     }
     
     if (!$error) {
-        if(mysqli_query($conn, "insert into project_status values ('". $_SESSION['pid'] ."','" . $status ."')")) {
+        $stmt = $conn->prepare("INSERT INTO project_status VALUES (?,?)");
+        $stmt->bind_param('ss', $_SESSION['pid'],$status);
+        if($stmt->execute()) {
             $successmsg = "Successfully Inserted!";
         } else {
             $errormsg = "Error...Please try again later!";

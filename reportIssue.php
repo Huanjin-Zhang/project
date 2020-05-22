@@ -37,7 +37,10 @@ if (isset($_POST['report'])) {
             $conn->begin_transaction();
 
             // A set of queries; if one fails, an exception should be thrown
-            $conn->query("INSERT INTO issue(pid,ititle,idescription,reporter) VALUES( '".$_SESSION['pid']."','".$ititle."','".$idescription."','".$reporter."')");
+            $stmt1 = $conn->prepare("INSERT INTO issue(pid,ititle,idescription,reporter) VALUES( '".$_SESSION['pid']."',?,?,'".$reporter."')");
+            $stmt1->bind_param('ss', $ititle,$idescription);
+            $stmt1->execute();
+
             $conn->query("INSERT INTO status_history( iid,currentstatus,modifytime) VALUES((SELECT max(iid) from issue where pid = '".$_SESSION['pid']."'),'OPEN', now())");
 
             // If we arrive here, it means that no exception was thrown

@@ -55,12 +55,15 @@ if (isset($_POST['signup'])) {
     }
 
     if (!$error && !$mailerror) {
-        if(mysqli_query($conn, "insert into user values ('". $email ."','" . $uname . "','" . $password . "','" . $displayname ."')")) {
+        $stmt = $conn->prepare("INSERT INTO user VALUES (?,?,?,?)");
+        $stmt->bind_param('ssss', $email,$uname,$password,$displayname);
+ 
+        if($stmt->execute()){
             $url = "signin.php";
             echo "<script type='text/javascript'>";
             echo "window.location.href='$url'";
             echo "</script>";
-        } else {
+        }else {
             $errormsg = "Error...Please try again later!";
         }
     }
