@@ -56,7 +56,7 @@ if (isset($_POST['signup'])) {
 
     if (!$error && !$mailerror) {
         $stmt = $conn->prepare("INSERT INTO user VALUES (?,?,?,?)");
-        $stmt->bind_param('ssss', $email,$uname,$password,$displayname);
+        $stmt->bind_param('ssss', $email,$uname,sha1($password),$displayname);
  
         if($stmt->execute()){
             $url = "signin.php";

@@ -22,7 +22,7 @@ if (isset($_POST['signin'])) {
         while ($row = $userresult -> fetch_assoc()) {
             if ($row['username'] == $uname) {
                 $nameerror = false;
-                if ($row['password'] == $password) {
+                if ($row['password'] == sha1($password)) {
                 // if ($row['password'] == sha1($password)) {
                     $passerror = false;            
                     $_SESSION['valid_user'] = $uname;
