@@ -87,10 +87,9 @@ if(isset($_GET["iid"])){
     $history = $conn->query($get_history);
 
     if ($history -> num_rows > 0) {
-        echo "<table class= 'table table-striped table-hover'><tr><th>Issue ID</th><th>Stutus</th><th>Modify Time</th></tr>";
+        echo "<table class= 'table table-striped table-hover'><tr><th>Stutus</th><th>Modify Time</th></tr>";
         while ($row = $history -> fetch_assoc()) {
             echo "<tr>";
-            echo "<td>" . $row['iid'] . "</td>";
             echo "<td>" . $row['currentstatus'] . "</td>";
             echo "<td>" . $row['modifytime'] . "</td>";
             echo "</tr>";                

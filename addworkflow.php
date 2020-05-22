@@ -114,7 +114,17 @@ if (isset($_POST['add'])) {
 </nav>
 
 <?php
-if($_SESSION['pid']){
+if(isset($_POST['beginstatus'])&& isset($_POST['endstatus'])){
+    if(mysqli_query($conn, "insert into workflow values ('". $_SESSION['pid'] ."','" . $_POST['beginstatus'] . "', '" . $_POST['endstatus'] . "')")) {
+            $successmsg = "Successfully Inserted!";
+        } else {
+            $errormsg = "Error...Please try again later!";
+        }
+    }
+?>
+
+<?php
+if(isset($_SESSION['pid'])){
     echo "<div class='row'>
                 <div class='center-block' style='width:80%;'>
                 <div class='page-header'>
@@ -124,7 +134,7 @@ if($_SESSION['pid']){
     $issues = $conn->query($get_issue);
 
     if ($issues -> num_rows > 0) {
-        echo "<table class= 'table table-striped table-hover'><tr><th>Project Status</th></tr>";
+        echo "<table class= 'table table-striped table-hover'><tr><th>Begin Status</th><th>End Status</th></tr>";
         while ($row = $issues -> fetch_assoc()) {
             echo "<tr>";
             echo "<td>" . $row['beginstatus'] . "</td>";
@@ -139,6 +149,7 @@ if($_SESSION['pid']){
 }
 
 ?>
+
 <div class = "row">
     <div class="center-block" style="width:80%;">
         <div class="page-header'">
@@ -150,20 +161,35 @@ if($_SESSION['pid']){
 <div class="container">
     <div class="row">
         <div class="col-md-4 col-md-offset-4 well">
-            <form role="form" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" name="addleaderform">
-                <fieldset>
-                    <div class="form-group">
-                        <label for="name">Status</label>
-                        <input type="text" name="status" placeholder="Status" required class="form-control" />
-                        <span class="text-danger"><?php if (isset($status_error)) echo $status_error; ?></span>
-                    </div>
-                    <div class="form-group">
-                        <input type="submit" name="add" value="Add" class="btn btn-primary" />
-                    </div>
-                </fieldset>
-            </form>
-            <span class="text-success"><?php if (isset($successmsg)) { echo $successmsg; } ?></span>
-            <span class="text-danger"><?php if (isset($errormsg)) { echo $errormsg; } ?></span>
+            <h2 align ='center'>Add workflow from 
+                <form action="" method="post">
+                    <select name="beginstatus">
+                        <option value=0>begin status</option>
+                        <?php
+                            $sql = "SELECT status FROM project_status WHERE pid = '" . $_GET['pid'] . "'";
+                            $result = $conn->query($sql);
+                            while($row = $result->fetch_assoc())
+                            {
+                                echo "<option value = '".$row['status']."'>'".$row['status']."'</option>";
+                            } 
+                        ?>
+                    </select>
+                    to
+                    <select name="endstatus">
+                        <option value=0>end status</option>
+                        <?php
+                            $sql = "SELECT status FROM project_status WHERE pid = '" . $_GET['pid'] . "'";
+                            $result = $conn->query($sql);
+                            while($row = $result->fetch_assoc())
+                            {
+                                echo "<option value = '".$row['status']."'>'".$row['status']."'</option>";
+                            } 
+                        ?>
+                    </select>
+                    <input type="submit" value="Submit">
+                </form>
+            </h2>
+
         </div>
         <!-- <form method="post" action="addworkflow.php?pid=<php? echo $_SESSION['pid'] ?>" name="jumptoworkflow" class="col-md-4 col-md-offset-4 well">
             <input type="submit" name="next" value="Next" class="btn btn-primary" />

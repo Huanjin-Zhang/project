@@ -89,7 +89,7 @@ echo "<div class='row'>
             <h2 align ='center'>Project Led by you</h2><br/>
             
             </div>";
-$get_project = "select * from (select creator,ptitle,pdescription,pcreatetime,pid from project_leads natural join project natural join user where username = '"  . $_SESSION['valid_user'] . "') as temp natural join user where temp.creator = user.uemail";
+$get_project = "select * from (select creator,ptitle,pdescription,pcreatetime,pid from project_leads natural join project natural join user where username = '"  . $_SESSION['valid_user'] . "') as temp natural join user where temp.creator = user.uemail order by pcreatetime DESC";
 $project = $conn->query($get_project);
 
 if ($project -> num_rows > 0) {

@@ -14,15 +14,15 @@ if (isset($_POST['report'])) {
     
 
     // requirement for password
-    if(strlen($ititle) >10) {
+    if(strlen($ititle) >30) {
         $error = true;
-        $ititle_error = "Title must be maximum of 10 characters";
+        $ititle_error = "Title must be maximum of 30 characters";
     }
 
     // password should be the same
-    if(strlen($idescription) >30) {
+    if(strlen($idescription) >100) {
         $error = true;
-        $ides_error = "Description must be maximum of 30 characters";
+        $ides_error = "Description must be maximum of 100 characters";
     }
 
     if (!$error) {

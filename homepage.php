@@ -89,7 +89,7 @@ echo "<div class='row'>
             <div class='page-header'>
             <h2 align ='center'>Project Lists</h2><br/>
             </div>";
-$get_project = "select * from project,user where uemail = creator";
+$get_project = "select * from project,user where uemail = creator order by pcreatetime DESC";
 $project = $conn->query($get_project);
 if ($project -> num_rows > 0) {
     echo "<table class= 'table table-striped table-hover'><tr><th>Creator</th><th>Title</th><th>Description</th><th>Create Time</th><th></th></tr>";
