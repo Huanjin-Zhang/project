@@ -8,7 +8,7 @@ $error = false;
 
 //check if form is submitted
 if (isset($_POST['next'])) {
-    setcookie('mycookie', $_POST['next']);
+    //setcookie('mycookie', $_POST['next']);
     $ptitle = mysqli_real_escape_string($conn, $_POST['ptitle']);
     $pdescription = mysqli_real_escape_string($conn, $_POST['pdescription']);
     
@@ -45,9 +45,13 @@ if (isset($_POST['next'])) {
             // i.e. no query has failed, and we can commit the transaction
             $successmsg = "Successfully Inserted!";
             $conn->commit();
-            //jump to checkissue
-            $pid = $conn->query()
-            $url = "checkissue.php?pid=".$_SESSION["pid"];
+         
+            $pidquery = "SELECT * from project where creator = '".$creator."' order by pid DESC limit 1";
+            $pidresult = $conn->query($pidquery);
+            $pidarray = $pidresult -> fetch_assoc();
+            $pid = $pidarray['pid'];
+
+            $url = "addstatus.php?pid=".$pid;
             echo "<script type='text/javascript'>";
             echo "window.location.href='$url'";
             echo "</script>";
@@ -173,11 +177,7 @@ if (isset($_POST['next'])) {
             <span class="text-danger"><?php if (isset($errormsg)) { echo $errormsg; } ?></span>
         </div>
     </div>
-    <div class="row">
-        <div class="col-md-4 col-md-offset-4 text-center">
-        Already Registered? <a href="signin.php">Click Here to Sign In</a>
-        </div>
-    </div>
+
 </div>
 </body>
 </html>

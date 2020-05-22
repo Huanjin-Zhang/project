@@ -1,5 +1,7 @@
 <?php
 session_start();
+if (isset($_GET['iid']))    
+    $_SESSION['iid'] = $_GET['iid'];
 include_once 'db_connection.php';
 ?>
 
@@ -10,9 +12,9 @@ include_once 'db_connection.php';
     <meta charset="utf-8">
     <title>Issue Tracking</title>
     <!-- Bootstrap -->
-	<link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
-	<script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
-	<script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
     
 
     
@@ -65,15 +67,34 @@ include_once 'db_connection.php';
             </ul>
             
             <ul class="nav navbar-nav navbar-right" style="<?php if (isset($_SESSION['valid_user'])) echo "display:none"; ?>"> 
-            	<li><a href="signin.php">Sign In</a></li> 
-            	<li><a href="signup.php">Sign Up</a></li> 
-        	</ul> 
+                <li><a href="signin.php">Sign In</a></li> 
+                <li><a href="signup.php">Sign Up</a></li> 
+            </ul> 
             <p class="navbar-form navbar-right" style="<?php if (!isset($_SESSION['valid_user'])) echo "display:none"; ?>">Welcome! <a target="_blank" href="userinfo.php"><?php echo $_SESSION['valid_user']; ?></a><a style="<?php if (!isset($_SESSION['valid_user'])) echo "display:none"; ?>"href="logout.php">
             Log Out</a></p>
         </div>
     </div>
 </nav>
 
+
+
+<!-- <div class = "row">
+    <div class="center-block" style="width:80%;">
+        <div class="page-header'">
+            <button type='button' class ='btn btn-success' style='<?php if(!isset($_SESSION['valid_user'])) echo "display:none"; ?>'      onclick='window.location.href="reportIssue.php?pid=".$_GET["pid"]."\""'>Report Issues</button>
+        </div>
+    </div>
+</div> -->
+
+<?php
+if(isset($_POST['currentstatus'])){
+    if(mysqli_query($conn, "insert into status_history values ('". $_SESSION['iid'] ."','" . $_POST['currentstatus'] . "', now())")) {
+            $successmsg = "Successfully Inserted!";
+        } else {
+            $errormsg = "Error...Please try again later!";
+        }
+    }
+?>
 
 <?php
 
@@ -87,10 +108,9 @@ if(isset($_GET["iid"])){
     $history = $conn->query($get_history);
 
     if ($history -> num_rows > 0) {
-        echo "<table class= 'table table-striped table-hover'><tr><th>Issue ID</th><th>Stutus</th><th>Modify Time</th></tr>";
+        echo "<table class= 'table table-striped table-hover'><tr><th>Status</th><th>Modify Time</th></tr>";
         while ($row = $history -> fetch_assoc()) {
             echo "<tr>";
-            echo "<td>" . $row['iid'] . "</td>";
             echo "<td>" . $row['currentstatus'] . "</td>";
             echo "<td>" . $row['modifytime'] . "</td>";
             echo "</tr>";                
@@ -103,13 +123,32 @@ if(isset($_GET["iid"])){
 }
 ?>
 
-<!-- <div class = "row">
-	<div class="center-block" style="width:80%;">
-        <div class="page-header'">
-        	<button type='button' class ='btn btn-success' style='<?php if(!isset($_SESSION['valid_user'])) echo "display:none"; ?>'      onclick='window.location.href="reportIssue.php?pid=".$_GET["pid"]."\""'>Report Issues</button>
-        </div>
-   	</div>
-</div> -->
+
+<h2 align ='center'>Update the status from 
+    <?php 
+        $query = "SELECT * FROM status_history WHERE iid = '" . $_GET['iid'] . "' order by modifytime DESC";
+        $getstatus = $conn->query($query);
+        $row = $getstatus->fetch_assoc();
+        $status = $row['currentstatus'];
+        echo "'".$status."'";
+    ?> to 
+<form action="" method="post">
+    <select name="currentstatus">
+        <option value=0>next status</option>
+        <?php
+            $sql = "SELECT endstatus FROM workflow WHERE pid = (select pid from issue WHERE iid = '" . $_GET['iid'] . "') and beginstatus = '".$status."'";
+            $result = $conn->query($sql);
+            while($row = $result->fetch_assoc())
+            {
+                echo "<option value = '".$row['endstatus']."'>'".$row['endstatus']."'</option>";
+            } 
+        ?>
+    </select>
+    <input type="submit" value="Submit">
+</form>
+</h2>
+
+
 <!-- Footer -->
 <footer>
     <div>
@@ -126,6 +165,6 @@ if(isset($_GET["iid"])){
     </div>
    
 </footer>
-			
+            
 </body>
 </html>
