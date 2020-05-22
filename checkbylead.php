@@ -88,7 +88,6 @@ if(isset($_GET["pid"])){
                 <div class='center-block' style='width:80%;'>
                 <div class='page-header'>
                 <h2 align ='center'>Issues of the Project</h2><br/>
-                <button type='button' class ='btn btn-success' onclick='window.location.href=\"reportIssue.php\"'>Report Issues</button>
                 </div>";
     $get_issue = "with current_status as(select iid,max(modifytime) as newest from status_history group by iid) select iid,ititle,idescription,currentstatus,modifytime,u2.username as reporter from user u1 natural join issue natural join status_history natural join current_status,user u2 where issue.pid = " . "'" . $_GET['pid'] . "'and modifytime = newest and reporter=u2.uemail group by iid";
     $issues = $conn->query($get_issue);
