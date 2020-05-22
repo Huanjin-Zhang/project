@@ -1,6 +1,8 @@
 <?php
 session_start();
 include_once 'db_connection.php';
+if (isset($_GET['pid']))    
+    $_SESSION['pid'] = $_GET['pid'];
 ?>
 
 
@@ -77,13 +79,13 @@ include_once 'db_connection.php';
 
 <?php
 
-if(isset($_GET["pid"])){
+if(isset($_SESSION["pid"])){
     echo "<div class='row'>
                 <div class='center-block' style='width:80%;'>
                 <div class='page-header'>
                 <h2 align ='center'>Issues of the Project</h2><br/>
                 </div>";
-    $get_issue = "with current_status as(select iid,max(modifytime) as newest from status_history group by iid) select iid,assigndate,ititle,idescription,currentstatus,modifytime,u2.username as reporter from user u1 natural join assignee natural join issue natural join status_history natural join current_status,user u2 where issue.pid = " . "'" . $_GET['pid'] . "'and modifytime = newest and reporter=u2.uemail group by iid";
+    $get_issue = "with current_status as(select iid,max(modifytime) as newest from status_history group by iid) select iid,ititle,idescription,currentstatus,modifytime,u2.username as reporter from user u1 natural join issue natural join status_history natural join current_status,user u2 where issue.pid = " . "'" .$_SESSION["pid"] . "'and modifytime = newest and reporter=u2.uemail group by iid";
     $issues = $conn->query($get_issue);
 
     if ($issues -> num_rows > 0) {

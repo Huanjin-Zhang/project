@@ -1,6 +1,41 @@
 <?php
 session_start();
 include_once 'db_connection.php';
+if (isset($_GET['iid']))    
+    $_SESSION['iid'] = $_GET['iid'];
+$error = true;
+
+//check if form is submitted
+if (isset($_POST['add'])) {
+    setcookie('mycookie', $_POST['add']);
+    $uname = mysqli_real_escape_string($conn, $_POST['uname']);
+    // verify the username and email
+    $userquery = "SELECT * FROM user";
+    $userresult = $conn -> query($userquery);
+    if ($userresult -> num_rows > 0) {
+        while ($row = $userresult -> fetch_assoc()) {
+            if ($row['username'] == $uname) {
+                $error = false;   
+            }
+        }
+        if($error == true){
+            $uname_error = "This username do not exist";
+        }
+    }
+    
+    if (!$error) {
+        $uemailquery = "SELECT * FROM user WHERE username = '" . $uname . "'";
+        $uemailresult = $conn -> query($uemailquery);
+        $useremailarray = $uemailresult -> fetch_assoc();
+        $useremail = $useremailarray['uemail'];
+        if(mysqli_query($conn, "insert into assignee values ('". $_SESSION['iid'] ."','" . $useremail . "',now())" )) {
+            $successmsg = "Successfully Inserted!";
+        } else {
+            $errormsg = "Error...Please try again later!";
+        }
+    }
+}
+
 ?>
 
 
@@ -83,38 +118,52 @@ include_once 'db_connection.php';
 </nav>
 
 <?php
-if(isset($_GET["pid"])){
+if($_SESSION['iid']){
     echo "<div class='row'>
                 <div class='center-block' style='width:80%;'>
                 <div class='page-header'>
-                <h2 align ='center'>Issues of the Project</h2><br/>
-                <button type='button' class ='btn btn-success' onclick='window.location.href=\"reportIssue.php\"'>Report Issues</button>
+                <h2 align ='center'>Assignees of Issue</h2><br/>
                 </div>";
-    $get_issue = "with current_status as(select iid,max(modifytime) as newest from status_history group by iid) select iid,ititle,idescription,currentstatus,modifytime,u2.username as reporter from user u1 natural join issue natural join status_history natural join current_status,user u2 where issue.pid = " . "'" . $_GET['pid'] . "'and modifytime = newest and reporter=u2.uemail group by iid";
+    $get_issue = "select * from assignee natural join user where iid = '".$_SESSION['iid']."'";
     $issues = $conn->query($get_issue);
 
     if ($issues -> num_rows > 0) {
-        echo "<table class= 'table table-striped table-hover'><tr><th>Issue ID</th><th>Issue Title</th><th>Issue Description</th><th>Current Status</th><th>Modifytime</th><th>Reporter</th><th></th><th><th></tr>";
+        echo "<table class= 'table table-striped table-hover'><tr><th>User Name</th><th>Assign Date</th></tr>";
         while ($row = $issues -> fetch_assoc()) {
             echo "<tr>";
-            echo "<td>" . $row['iid'] . "</td>";
-            echo "<td>" . $row['ititle'] . "</td>";
-            echo "<td>" . $row['idescription'] . "</td>";
-            echo "<td>" . $row['currentstatus'] . "</td>";
-            echo "<td>" . $row['modifytime'] . "</td>";
-            echo "<td>" . $row['reporter'] . "</td>";
-            echo "<td><a href='checkdetailbylead.php?iid=".$row['iid']."'>check detail</a></td>";
-            echo "<td><a href='addnewassignee.php?iid=".$row['iid']."'>add new assignee</a></td>";
+            echo "<td>" . $row['username'] . "</td>";
+            echo "<td>" . $row['assigndate'] . "</td>";
             echo "</tr>";                
         }
         echo "</table><br/>";       
     } else {
-        echo "<h3 align ='center'>There are No issue under such project</h3><br/><br/><br/>";
+        echo "<h3 align ='center'>There are No assignee under such issue</h3><br/><br/><br/>";
     }
     echo "</div></div>";
 }
 
 ?>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-4 col-md-offset-4 well">
+            <form role="form" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" name="addleaderform">
+                <fieldset>
+                    <div class="form-group">
+                        <label for="name">Username</label>
+                        <input type="text" name="uname" placeholder="Username" required class="form-control" />
+                        <span class="text-danger"><?php if (isset($uname_error)) echo $uname_error; ?></span>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" name="add" value="Add" class="btn btn-primary" />
+                    </div>
+                </fieldset>
+            </form>
+            <span class="text-success"><?php if (isset($successmsg)) { echo $successmsg; } ?></span>
+            <span class="text-danger"><?php if (isset($errormsg)) { echo $errormsg; } ?></span>
+        </div>
+    </div>
+</div>
 
 <!-- Footer -->
 <footer>
@@ -130,7 +179,6 @@ if(isset($_GET["pid"])){
             </div>
         </div>
     </div>
-   
 </footer>
 			
 </body>

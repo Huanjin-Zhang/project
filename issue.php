@@ -92,7 +92,7 @@ $get_issue = "with current_status as(select iid,max(modifytime) as newest from s
 $issues = $conn->query($get_issue);
 
 if ($issues -> num_rows > 0) {
-    echo "<table class= 'table table-striped table-hover'><tr><th>Issue ID</th><th>Assign Date</th><th>Issue Title</th><th>Issue Description</th><th>Current Status</th><th>Modifytime</th><th>Reporter</th></tr>";
+    echo "<table class= 'table table-striped table-hover'><tr><th>Issue ID</th><th>Assign Date</th><th>Issue Title</th><th>Issue Description</th><th>Current Status</th><th>Modifytime</th><th>Reporter</th><th></th></tr>";
     while ($row = $issues -> fetch_assoc()) {
         echo "<tr>";
         echo "<td>" . $row['iid'] . "</td>";
@@ -102,6 +102,7 @@ if ($issues -> num_rows > 0) {
         echo "<td>" . $row['currentstatus'] . "</td>";
         echo "<td>" . $row['modifytime'] . "</td>";
         echo "<td>" . $row['reporter'] . "</td>";
+        echo "<td><a href='checkdetailbyassignee.php?iid=".$row['iid']."'>check detail</a></td>"; 
         echo "</tr>";                
     }
     echo "</table><br/>";       

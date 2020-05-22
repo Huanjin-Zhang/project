@@ -1,12 +1,14 @@
 <?php
 session_start();
 include_once 'db_connection.php';
-
+if (isset($_GET['pid']))    
+    $_SESSION['pid'] = $_GET['pid'];
 //set validation error flag as false
 $error = false;
 
 //check if form is submitted
 if (isset($_POST['report'])) {
+    setcookie('mycookie', $_POST['report']);
     $ititle = mysqli_real_escape_string($conn, $_POST['ititle']);
     $idescription = mysqli_real_escape_string($conn, $_POST['idescription']);
     
@@ -24,24 +26,37 @@ if (isset($_POST['report'])) {
     }
 
     if (!$error) {
-        $get_email = $conn->query("select * from user where username = '". $_SESSION['valid_user']."'");
-        $user = $get_email->fetch_assoc();
-        $reporter = $user['uemail'];
+        $uemailquery = "SELECT * FROM user WHERE username = '" . $_SESSION['valid_user'] . "'";
+        $uemailresult = $conn -> query($uemailquery);
+        $useremailarray = $uemailresult -> fetch_assoc();
+        $reporter = $useremailarray['uemail'];
 
-        $trans = 
-        "START TRANSACTION; 
-        INSERT INTO issue(pid,ititle,idescription,reporter) VALUES( ".$_GET['pid'].",'".$ititle."','".$idescription."','".$reporter."');      
-        SELECT 
-            @iid:=MAX(iid)
-        FROM
-            issue;
-        INSERT INTO status_history( iid,currentstatus,modifytime) VALUES(@iid,'OPEN', now());     
-        COMMIT; ";
-        if(mysqli_query($conn, $trans)) {
-            $successmsg = "Successfully Registered! <a href='checkIssue.php?pid=".$_GET['pid']."'>Click here to Login</a>";
-        } else {
+        
+        try {
+            // First of all, let's begin a transaction
+            $conn->begin_transaction();
+
+            // A set of queries; if one fails, an exception should be thrown
+            $conn->query("INSERT INTO issue(pid,ititle,idescription,reporter) VALUES( '".$_SESSION['pid']."','".$ititle."','".$idescription."','".$reporter."')");
+            $conn->query("INSERT INTO status_history( iid,currentstatus,modifytime) VALUES((SELECT max(iid) from issue where pid = '".$_SESSION['pid']."'),'OPEN', now())");
+
+            // If we arrive here, it means that no exception was thrown
+            // i.e. no query has failed, and we can commit the transaction
+            $successmsg = "Successfully Inserted!";
+            $conn->commit();
+            //jump to checkissue
+            $url = "checkissue.php?pid=".$_SESSION["pid"];
+            echo "<script type='text/javascript'>";
+            echo "window.location.href='$url'";
+            echo "</script>";
+
+        } catch (Exception $e) {
+            // An exception has been thrown
+            // We must rollback the transaction
             $errormsg = "Error...Please try again later!";
+            $conn->rollback();
         }
+
     }
 }
 ?>
@@ -130,14 +145,13 @@ if (isset($_POST['report'])) {
     <div class="row">
         <div class="col-md-4 col-md-offset-4 well">
             <form role="form" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" name="reportissueform">
-                <input type="hidden" name="pid" value="<?php echo htmlspecialchars($_GET['pid']);?>">
                 <fieldset>
                     <legend>Report Issue</legend>
 
                     <div class="form-group">
                         <label for="name">Issue Title</label>
                         <input type="text" name="ititle" placeholder="issue title" class="form-control" />
-                        <span class="text-danger"><?php if (isset($issue_error)) echo $issue_error; ?></span>
+                        <span class="text-danger"><?php if (isset($ititle_error)) echo $ititle_error; ?></span>
                     </div>
 
                     <div class="form-group">
@@ -149,8 +163,11 @@ if (isset($_POST['report'])) {
                     <div class="form-group">
                         <input type="submit" name="report" value="Report" class="btn btn-primary" />
                     </div>
+                    <span class="text-success"><?php if (isset($successmsg)) { echo $successmsg; } ?></span>
+                    <span class="text-danger"><?php if (isset($errormsg)) { echo $errormsg; } ?></span>
                 </fieldset>
             </form>
+
         </div>
     </div>
 </div>
