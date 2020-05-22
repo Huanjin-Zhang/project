@@ -87,7 +87,7 @@ echo "<div class='row'>
             <div class='center-block' style='width:80%;'>
             <div class='page-header'>
             <h2 align ='center'>Project Led by you</h2><br/>
-            <button type='button' class ='btn btn-success' onclick='window.location.href=\"createProject.php\"'>Create Project</button>
+            
             </div>";
 $get_project = "select * from (select creator,ptitle,pdescription,pcreatetime,pid from project_leads natural join project natural join user where username = '"  . $_SESSION['valid_user'] . "') as temp natural join user where temp.creator = user.uemail";
 $project = $conn->query($get_project);
@@ -111,7 +111,14 @@ if ($project -> num_rows > 0) {
 echo "</div></div>";
 
 ?>
-
+<div class = "row">
+    <div class="center-block" style="width:80%;">
+        <div class="page-header'">
+            <a href='createProject.php'>
+            <button type='button' class ='btn btn-success' style='<?php if(!isset($_SESSION['valid_user'])) echo "display:none"; ?>'>Create Project</button></a>
+        </div>
+    </div>
+</div>
 <!-- Footer -->
 <footer>
     <div>

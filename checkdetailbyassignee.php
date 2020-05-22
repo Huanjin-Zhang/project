@@ -76,6 +76,16 @@ include_once 'db_connection.php';
     </div>
 </nav>
 
+<?php
+if(isset($_POST['currentstatus'])){
+    if(mysqli_query($conn, "insert into status_history values ('". $_SESSION['iid'] ."','" . $_POST['currentstatus'] . "', now())")) {
+            $successmsg = "Successfully Inserted!";
+        } else {
+            $errormsg = "Error...Please try again later!";
+        }
+    }
+?>
+
 
 <?php
 if(isset($_SESSION['iid'])){
@@ -103,6 +113,31 @@ if(isset($_SESSION['iid'])){
 }
 
 ?>
+
+<h2 align ='center'>Update the status from 
+    <?php 
+        $query = "SELECT * FROM status_history WHERE iid = '" . $_GET['iid'] . "' order by modifytime DESC";
+        $getstatus = $conn->query($query);
+        $row = $getstatus->fetch_assoc();
+        $status = $row['currentstatus'];
+        echo "'".$status."'";
+    ?> to 
+<form action="" method="post">
+    <select name="currentstatus">
+        <option value=0>next status</option>
+        <?php
+            $sql = "SELECT endstatus FROM workflow WHERE pid = (select pid from issue WHERE iid = '" . $_GET['iid'] . "') and beginstatus = '".$status."'";
+            $result = $conn->query($sql);
+            while($row = $result->fetch_assoc())
+            {
+                echo "<option value = '".$row['endstatus']."'>'".$row['endstatus']."'</option>";
+            } 
+        ?>
+    </select>
+    <input type="submit" value="Submit">
+</form>
+</h2>
+
 
 <!-- Footer -->
 <footer>
