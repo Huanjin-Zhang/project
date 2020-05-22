@@ -12,9 +12,9 @@ if (isset($_GET['pid']))
     <meta charset="utf-8">
     <title>Issue Tracking</title>
     <!-- Bootstrap -->
-	<link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
-	<script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
-	<script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
     
 
     
@@ -67,15 +67,40 @@ if (isset($_GET['pid']))
             </ul>
             
             <ul class="nav navbar-nav navbar-right" style="<?php if (isset($_SESSION['valid_user'])) echo "display:none"; ?>"> 
-            	<li><a href="signin.php">Sign In</a></li> 
-            	<li><a href="signup.php">Sign Up</a></li> 
-        	</ul> 
+                <li><a href="signin.php">Sign In</a></li> 
+                <li><a href="signup.php">Sign Up</a></li> 
+            </ul> 
             <p class="navbar-form navbar-right" style="<?php if (!isset($_SESSION['valid_user'])) echo "display:none"; ?>">Welcome! <a target="_blank" href="userinfo.php"><?php echo $_SESSION['valid_user']; ?></a><a style="<?php if (!isset($_SESSION['valid_user'])) echo "display:none"; ?>"href="logout.php">
             Log Out</a></p>
         </div>
     </div>
 </nav>
 
+<div class = "row">
+    <div class="center-block" style="width:80%;">
+        <div class="page-header'">
+            <form role="form" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" name="searchform">
+                <fieldset style="display: inline-block;" class="raw">
+                    <div class="form-group">
+                        <input type="text" name="keyword" placeholder="Filter for title or description" required class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" name="search" value="Filter" class="btn btn-success" />
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class = "row">
+    <div class="center-block" style="width:80%;">
+        <div class="page-header'">
+            <a href='checkissue.php?pid=<?php echo $_SESSION['pid']; ?>'>
+            <button type='button' class ='btn btn-success' style='<?php if(!isset($_SESSION['valid_user'])) echo "display:none"; ?>'>Show Original</button></a>
+        </div>
+    </div>
+</div>
 
 <?php
 
@@ -85,7 +110,12 @@ if(isset($_SESSION["pid"])){
                 <div class='page-header'>
                 <h2 align ='center'>Issues of the Project</h2><br/>
                 </div>";
-    $get_issue = "with current_status as(select iid,max(modifytime) as newest from status_history group by iid) select iid,ititle,idescription,currentstatus,modifytime,u2.username as reporter from user u1 natural join issue natural join status_history natural join current_status,user u2 where issue.pid = " . "'" .$_SESSION["pid"] . "'and modifytime = newest and reporter=u2.uemail group by iid";
+    if(!isset($_POST["keyword"])){
+        $get_issue = "with current_status as(select iid,max(modifytime) as newest from status_history group by iid) select iid,ititle,idescription,currentstatus,modifytime,u2.username as reporter from user u1 natural join issue natural join status_history natural join current_status,user u2 where issue.pid = " . "'" .$_SESSION["pid"] . "'and modifytime = newest and reporter=u2.uemail group by iid";
+    }
+    else{
+        $get_issue = "with current_status as(select iid,max(modifytime) as newest from status_history group by iid) select iid,ititle,idescription,currentstatus,modifytime,u2.username as reporter from user u1 natural join issue natural join status_history natural join current_status,user u2 where issue.pid = " . "'" .$_SESSION["pid"] . "'and modifytime = newest and reporter=u2.uemail and (ititle like '%" .$_POST["keyword"] . "%' or idescription like '%" .$_POST["keyword"] . "%') group by iid";
+    }
     $issues = $conn->query($get_issue);
 
     if ($issues -> num_rows > 0) {
@@ -102,19 +132,19 @@ if(isset($_SESSION["pid"])){
         }
         echo "</table><br/>";       
     } else {
-        echo "<h3 align ='center'>There are No issue under such project</h3><br/><br/><br/>";
+        echo "<h3 align ='center'>There are No such issue under such project</h3><br/><br/><br/>";
     }
     echo "</div></div>";
 }
 ?>
 
 <div class = "row">
-	<div class="center-block" style="width:80%;">
+    <div class="center-block" style="width:80%;">
         <div class="page-header'">
-            <a href='reportIssue.php?pid=<?php echo $_GET["pid"]; ?>'>
-        	<button type='button' class ='btn btn-success' style='<?php if(!isset($_SESSION['valid_user'])) echo "display:none"; ?>'>Report Issues</button></a>
+            <a href='reportIssue.php?pid=<?php echo $_SESSION['pid']; ?>'>
+            <button type='button' class ='btn btn-success' style='<?php if(!isset($_SESSION['valid_user'])) echo "display:none"; ?>'>Report Issues</button></a>
         </div>
-   	</div>
+    </div>
 </div>
 <!-- Footer -->
 <footer>
@@ -132,6 +162,6 @@ if(isset($_SESSION["pid"])){
     </div>
    
 </footer>
-			
+            
 </body>
 </html>
