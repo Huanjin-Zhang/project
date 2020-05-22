@@ -70,7 +70,7 @@ if (isset($_GET['pid']))
                 <li><a href="signin.php">Sign In</a></li> 
                 <li><a href="signup.php">Sign Up</a></li> 
             </ul> 
-            <p class="navbar-form navbar-right" style="<?php if (!isset($_SESSION['valid_user'])) echo "display:none"; ?>">Welcome! <a target="_blank" href="userinfo.php"><?php echo $_SESSION['valid_user']; ?></a><a style="<?php if (!isset($_SESSION['valid_user'])) echo "display:none"; ?>"href="logout.php">
+            <p class="navbar-form navbar-right" style="<?php if (!isset($_SESSION['valid_user'])) echo "display:none"; ?>">Welcome! <?php echo $_SESSION['valid_user']; ?><a style="<?php if (!isset($_SESSION['valid_user'])) echo "display:none"; ?>"href="logout.php">
             Log Out</a></p>
         </div>
     </div>
