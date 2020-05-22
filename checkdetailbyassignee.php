@@ -92,7 +92,7 @@ if(isset($_SESSION['iid'])){
     echo "<div class='row'>
                 <div class='center-block' style='width:80%;'>
                 <div class='page-header'>
-                <h2 align ='center'>Status history of the issue.</h2><br/>
+                <h2 align ='center'>Status History of the Issue</h2><br/>
                 </div>";
     $get_status = "SELECT * FROM status_history WHERE iid = '" . $_GET['iid'] . "' order by modifytime DESC";
     $status = $conn->query($get_status);
@@ -114,6 +114,7 @@ if(isset($_SESSION['iid'])){
 
 ?>
 
+<div class="row">
 <h2 align ='center'>Update the status from 
     <?php 
         $query = "SELECT * FROM status_history WHERE iid = '" . $_GET['iid'] . "' order by modifytime DESC";
@@ -137,6 +138,7 @@ if(isset($_SESSION['iid'])){
     <input type="submit" value="Submit">
 </form>
 </h2>
+</div>
 
 
 <!-- Footer -->

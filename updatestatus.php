@@ -137,17 +137,14 @@ if($_SESSION['pid']){
 }
 
 ?>
-<div>
-<div class = "row" style = "display: inline">
+<div class = "row">
     <div class="center-block" style="width:80%;">
         <div class="page-header'">
-            <a href='addworkflow.php?pid=<?php echo $_SESSION["pid"]; ?>'>
+            <a href='lead.php?'>
             <button type='button' class ='btn btn-success' style='<?php if(!isset($_SESSION['valid_user'])) echo "display:none"; ?>'>Next</button></a>
         </div>
     </div>
 </div>       
-
-</div>
 <div class="container">
     <div class="row">
         <div class="col-md-4 col-md-offset-4 well">

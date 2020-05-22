@@ -40,7 +40,7 @@ if (isset($_POST['next'])) {
             $conn->query("INSERT INTO project(creator,ptitle,pdescription,pcreatetime) VALUES( '".$creator."','".$ptitle."','".$pdescription."',now())");
             $conn->query("INSERT INTO project_leads( pid,uemail,addtime) VALUES((SELECT max(pid) from project where creator = '".$creator."'),'".$creator."', now())");
             $conn->query("INSERT INTO project_status(pid,status) VALUES ((SELECT max(pid) from project where creator = '".$creator."'),'OPEN'),     ((SELECT max(pid) from project where creator = '".$creator."'),'CLOSED')");
-            $conn->query("INSERT INTO workflow(pid,beginstatus,endstatus) VALUES ((SELECT max(pid) from project where creator = '".$creator."'),'OPEN','CLOSED')");
+           
             // If we arrive here, it means that no exception was thrown
             // i.e. no query has failed, and we can commit the transaction
             $successmsg = "Successfully Inserted!";

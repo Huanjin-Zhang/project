@@ -143,7 +143,7 @@ if(isset($_SESSION['pid'])){
         }
         echo "</table><br/>";       
     } else {
-        echo "<h3 align ='center'>There are No issue under such project</h3><br/><br/><br/>";
+        echo "<h3 align ='center'>There are No workflow under such project</h3><br/><br/><br/>";
     }
     echo "</div></div>";
 }

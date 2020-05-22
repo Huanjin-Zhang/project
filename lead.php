@@ -86,14 +86,14 @@ include_once 'db_connection.php';
 echo "<div class='row'>
             <div class='center-block' style='width:80%;'>
             <div class='page-header'>
-            <h2 align ='center'>Project Led by you</h2><br/>
+            <h2 align ='center'>Project Led by You</h2><br/>
             
             </div>";
 $get_project = "select * from (select creator,ptitle,pdescription,pcreatetime,pid from project_leads natural join project natural join user where username = '"  . $_SESSION['valid_user'] . "') as temp natural join user where temp.creator = user.uemail order by pcreatetime DESC";
 $project = $conn->query($get_project);
 
 if ($project -> num_rows > 0) {
-    echo "<table class= 'table table-striped table-hover'><tr><th>Creator</th><th>Title</th><th>Description</th><th>Create Time</th><th></th><th></th></tr>";
+    echo "<table class= 'table table-striped table-hover'><tr><th>Creator</th><th>Title</th><th>Description</th><th>Create Time</th><th></th><th></th><th></th><th></th></tr>";
     while ($row = $project -> fetch_assoc()) {
         echo "<tr>";
         echo "<td>" . $row['username'] . "</td>";
@@ -102,6 +102,8 @@ if ($project -> num_rows > 0) {
         echo "<td>" . $row['pcreatetime'] . "</td>";
         echo "<td><a href='checkbylead.php?pid=".$row['pid']."'>check issue</a></td>";
         echo "<td><a href='addnewlead.php?pid=".$row['pid']."'>add new lead</a></td>";
+        echo "<td><a href='addstatus.php?pid=".$row['pid']."'>add status</a></td>";        
+        echo "<td><a href='addworkflow.php?pid=".$row['pid']."'>add workflow</a></td>";
         echo "</tr>";                
     }
     echo "</table><br/>";       

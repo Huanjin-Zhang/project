@@ -88,7 +88,7 @@ echo "<div class='row'>
             <div class='page-header'>
             <h2 align ='center'>Issues assigned to you</h2><br/>
             </div>";
-$get_issue = "with current_status as(select iid,max(modifytime) as newest from status_history group by iid) select iid,assigndate,ititle,idescription,currentstatus,modifytime,u2.username as reporter from user u1 natural join assignee natural join issue natural join status_history natural join current_status,user u2 where u1.username = " . "'" . $_SESSION['valid_user'] . "'and modifytime = newest and reporter=u2.uemail group by iid";
+$get_issue = "with current_status as(select iid,max(modifytime) as newest from status_history group by iid) select iid,assigndate,ititle,idescription,currentstatus,modifytime,u2.username as reporter from user u1 natural join assignee natural join issue natural join status_history natural join current_status,user u2 where u1.username = " . "'" . $_SESSION['valid_user'] . "'and modifytime = newest and reporter=u2.uemail group by iid order by modifytime DESC";
 $issues = $conn->query($get_issue);
 
 if ($issues -> num_rows > 0) {
